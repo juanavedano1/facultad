@@ -24,10 +24,10 @@ app = Flask(__name__)
 app.config.from_object(Config)
 csrf = CSRFProtect(app)
 # --- Configuración de la base de datos MySQL ---
-app.config["SECRET_KEY"] = "PirataCordobesInstaMegaNashey2025"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:juancho16@localhost:3306/customer_portal'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SIMULATION_MODE'] = False # Cambia a True para simulación sin DB real
+# app.config["SECRET_KEY"] = "PirataCordobesInstaMegaNashey2025"
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:juancho16@localhost:3306/customer_portal'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SIMULATION_MODE'] = False # Cambia a True para simulación sin DB real
 
 # === INSTANCIAS DE EXTENSIÓN INICIALIZADAS CON LA APP YA CONFIGURADA ===
 db.init_app(app) # <-- Aquí inicializamos la 'db' que los modelos están usando.
