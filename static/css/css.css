@@ -110,6 +110,7 @@ margin-bottom: 15px;
     width: 100%;
     max-width: 800px; /* Ancho máximo para la tarjeta principal */
     animation: fadeIn 0.5s ease-out;
+    text-align: center;
 }
 
 .contract-service-card .card-header {
