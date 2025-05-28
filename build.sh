@@ -11,6 +11,10 @@ pip install -r requirements.txt
 echo "Ejecutando migraciones de base de datos..."
 flask db upgrade
 
+echo "Ejecutando seed de base de datos..."
+
+flask seed-db
+
 # Opcional: Ejecutar el comando de seed aquí (¡con cuidado!)
 # Si tu comando seed-db está diseñado para ser seguro de ejecutar múltiples veces 
 # (es decir, no crea duplicados o errores si los datos ya existen), puedes añadirlo.
