@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Panel de Administración{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/css.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
@@ -39,10 +40,51 @@
             </div>
 
             {% block admin_section_content %}
+                {% if active_tab == 'overview' %}
+                    <div class="admin-section">
+                        <h2><i class="bi bi-speedometer2"></i> Resumen del Sistema</h2>
+                        <p>Bienvenido al panel de control. Desde aquí puedes gestionar usuarios y ver estadísticas.</p>
+                    </div>
+
+                    <div class="admin-section">
+                        <h2><i class="bi bi-pie-chart-fill"></i> Distribución de Servicios Contratados</h2>
+                        <div style="width: 70%; max-width: 600px; margin: auto;">
+                            <canvas id="graficoServicios"></canvas>
+                        </div>
+                    </div>
+    {% endif %}
                 {# Este bloque será rellenado por las plantillas específicas de cada sección del admin #}
                 {# Por ejemplo, admin_users.html o admin_user_detail.html #}
             {% endblock %}
         </main>
     </div>
+    <script>
+    const canvasGrafico = document.getElementById('graficoServicios');
+    if (canvasGrafico) {
+        fetch("{{ url_for('admin.reporte_servicios_contratados') }}")
+            .then(response => response.json())
+            .then(datos => {
+                const ctx = canvasGrafico.getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: datos.labels,
+                        datasets: [{
+                            label: 'Nº de Contrataciones',
+                            data: datos.data,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)',
+                                'rgba(255, 206, 86, 0.8)', 'rgba(75, 192, 192, 0.8)',
+                                'rgba(153, 102, 255, 0.8)', 'rgba(255, 159, 64, 0.8)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { position: 'top' } } }
+                });
+            })
+            .catch(error => console.error("Error al obtener datos para el gráfico:", error));
+    }
+</script>
 </body>
 </html>

@@ -1,11 +1,18 @@
 # C:\Users\Juan Avedano\Desktop\Facultad\Proyecto\app.py
 
 import os
+import pandas as pd
+import io
+from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
+from openpyxl.utils import get_column_letter
+from openpyxl.cell.cell import MergedCell
 from flask import Flask, render_template, redirect, url_for, flash, request, Blueprint, current_app
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
 from forms import LoginForm, RegistrationForm, UserEditForm, ContractServiceForm, ToggleUserStatusForm
 # from config import Config # <-- Mantenla comentada si no tienes un config.py con tu URL de DB
 from functools import wraps
+from sqlalchemy import func
+from flask import jsonify, send_file
 from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
 from flask_bcrypt import Bcrypt
@@ -260,6 +267,176 @@ def index():
 app.register_blueprint(customer_dashboard_bp, url_prefix='/customer')
 
 admin_bp = Blueprint('admin', __name__, template_folder='templates/admin')
+
+# RUTA PARA LOS DATOS DEL GRÁFICO
+@admin_bp.route('/reporte/servicios_contratados')
+@login_required
+@admin_required
+def reporte_servicios_contratados():
+    """
+    Endpoint que devuelve en formato JSON la cantidad de veces que
+    cada servicio ha sido contratado.
+    """
+    try:
+        datos_grafico = db.session.query(
+            Service.name, 
+            func.count(user_services_association.c.user_id)
+        ).join(
+            user_services_association
+        ).group_by(
+            Service.name
+        ).order_by(
+            func.count(user_services_association.c.user_id).desc()
+        ).all()
+
+        labels = [row[0] for row in datos_grafico]
+        data = [row[1] for row in datos_grafico]    
+
+        return jsonify({'labels': labels, 'data': data})
+
+    except Exception as e:
+        print(f"Error al generar reporte de servicios: {e}")
+        return jsonify(error="Ocurrió un error al procesar la solicitud"), 500
+
+
+# RUTA PARA EXPORTAR SERVICIOS DE UN USUARIO A EXCEL (VERSIÓN FINAL)
+@admin_bp.route('/user/<int:user_id>/exportar-excel')
+@login_required
+@admin_required
+def exportar_excel_usuario(user_id):
+    """
+    Genera un archivo Excel ESTILIZADO con los detalles y servicios de un usuario.
+    """
+    user = User.query.get_or_404(user_id)
+    user_services = user.services_contracted.all()
+
+    if not user_services:
+        flash(f"El usuario '{user.username}' no tiene servicios para exportar.", 'warning')
+        return redirect(url_for('admin.user_detail', user_id=user_id))
+
+    # 1. Preparación de datos
+    datos_servicios = []
+    total_amount = 0.0
+    for service in user_services:
+        datos_servicios.append({
+            'ID Servicio': service.id, 'Nombre Servicio': service.name,
+            'Tipo': service.type, 'Precio': service.price
+        })
+        total_amount += service.price
+    df = pd.DataFrame(datos_servicios)
+
+    # 2. Creación del archivo y escritor
+    output = io.BytesIO()
+    writer = pd.ExcelWriter(output, engine='openpyxl')
+
+    # 3. Escritura de datos
+    df_cliente = pd.DataFrame([
+        {'Campo': 'ID Cliente', 'Valor': user.id},
+        {'Campo': 'Nombre de Usuario', 'Valor': user.username},
+        {'Campo': 'Email', 'Valor': user.email},
+        {'Campo': 'Fecha de Exportación', 'Valor': datetime.now().strftime('%d/%m/%Y %H:%M')}
+    ])
+    df_cliente.to_excel(writer, sheet_name='Info Cliente', index=False, startrow=1)
+    df.to_excel(writer, sheet_name='Servicios Contratados', index=False, startrow=1)
+
+    # 4. Acceso a objetos de openpyxl
+    workbook = writer.book
+    ws_cliente = workbook['Info Cliente']
+    ws_servicios = workbook['Servicios Contratados']
+
+    # 5. Definición de estilos
+    font_titulo = Font(name='Calibri', size=16, bold=True)
+    font_header = Font(name='Calibri', size=12, bold=True, color='FFFFFF')
+    font_total = Font(name='Calibri', size=11, bold=True)
+    alineacion_centrada = Alignment(horizontal='center', vertical='center')
+    alineacion_derecha = Alignment(horizontal='right', vertical='center')
+    relleno_header = PatternFill(start_color='4F81BD', end_color='4F81BD', fill_type='solid')
+    borde_fino = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    formato_moneda = '$ #,##0.00'
+
+    # 6. Aplicar estilos a 'Servicios Contratados'
+    ws_servicios.insert_rows(1)
+    ws_servicios.merge_cells('A1:D1')
+    titulo_servicios = ws_servicios['A1']
+    titulo_servicios.value = f"Reporte de Servicios de: {user.username}"
+    titulo_servicios.font = font_titulo
+    titulo_servicios.alignment = alineacion_centrada
+    
+    for cell in ws_servicios[2]:
+        cell.font = font_header
+        cell.fill = relleno_header
+        cell.border = borde_fino
+        cell.alignment = alineacion_centrada
+
+    for row in ws_servicios.iter_rows(min_row=3, max_row=ws_servicios.max_row, min_col=1, max_col=4):
+        for cell in row:
+            cell.border = borde_fino
+        cell_precio = row[3]
+        cell_precio.number_format = formato_moneda
+        cell_precio.alignment = alineacion_derecha
+        
+    total_row_index = ws_servicios.max_row + 1
+    ws_servicios[f'C{total_row_index}'] = 'TOTAL:'
+    ws_servicios[f'D{total_row_index}'] = total_amount
+    total_label_cell = ws_servicios[f'C{total_row_index}']
+    total_value_cell = ws_servicios[f'D{total_row_index}']
+    total_label_cell.font = font_total
+    total_label_cell.alignment = alineacion_derecha
+    total_label_cell.border = borde_fino
+    total_value_cell.font = font_total
+    total_value_cell.number_format = formato_moneda
+    total_value_cell.border = borde_fino
+
+    # Ajustar ancho de columnas (VERSIÓN ROBUSTA)
+    for i, column_cells in enumerate(ws_servicios.columns, 1):
+        column_letter = get_column_letter(i)
+        if i == 4: # Columna de Precio ('D')
+            ws_servicios.column_dimensions[column_letter].width = 15
+            continue
+        max_length = 0
+        for cell in column_cells:
+            if isinstance(cell, MergedCell):
+                continue
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = (max_length + 2)
+        ws_servicios.column_dimensions[column_letter].width = adjusted_width
+
+    # 7. Aplicar estilos a 'Info Cliente'
+    ws_cliente.insert_rows(1)
+    ws_cliente.merge_cells('A1:B1')
+    titulo_cliente = ws_cliente['A1']
+    titulo_cliente.value = "Información del Cliente"
+    titulo_cliente.font = font_titulo
+    titulo_cliente.alignment = alineacion_centrada
+    for cell in ws_cliente[2]:
+        cell.font = font_header
+        cell.fill = relleno_header
+        cell.border = borde_fino
+    for row in ws_cliente.iter_rows(min_row=3, max_row=ws_cliente.max_row, min_col=1, max_col=2):
+        for cell in row:
+            cell.border = borde_fino
+    ws_cliente.column_dimensions['A'].width = 25
+    ws_cliente.column_dimensions['B'].width = 40
+
+    # 8. Guardar y enviar el archivo
+    writer.close()
+    output.seek(0)
+    
+    return send_file(
+        output,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name=f'Reporte_{user.username}.xlsx'
+    )
+
+
+
+
+
 
 @admin_bp.route('/dashboard')
 @login_required
