@@ -1,570 +1,360 @@
-/* C:\Users\Juan Avedano\Desktop\Facultad\Proyecto\static\css\admin.css */
+/* =================================== */
+/* ===== ESTILOS GENERALES Y LAYOUT ===== */
+/* =================================== */
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más moderna */
-    background-color: #eef1f5; /* Fondo más claro y moderno */
+:root {
+    --sidebar-bg: #1e293b;
+    --sidebar-text: #e2e8f0;
+    --sidebar-text-hover: #ffffff;
+    --sidebar-active-bg: #334155;
+    --main-bg: #f1f5f9;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --primary-text: #0f172a;
+    --secondary-text: #64748b;
+    --red-btn-bg: #dc2626;
+    --red-btn-hover: #b91c1c;
+    --blue-accent: #3b82f6;
+}
+
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
-    color: #333;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--main-bg);
+    color: var(--primary-text);
 }
 
-
-
-.admin-header {
-    background-color: #2c3e50; /* Azul oscuro */
-    color: white;
-    padding: 15px 30px; /* Más padding */
-    text-align: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2); /* Sombra más pronunciada */
-    z-index: 1000; /* Asegura que esté por encima de todo */
-}
-.admin-header h1 {
-    margin: 0;
-    font-size: 2em; /* Más grande */
-    letter-spacing: 0.5px;
-}
-.admin-header .logout-btn {
-    background-color: #e74c3c; /* Rojo más vibrante */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-.admin-header .logout-btn:hover {
-    background-color: #c0392b;
-    transform: translateY(-2px); /* Pequeño efecto hover */
-}
-
-/* --- Layout del Admin Dashboard --- */
 .admin-layout-container {
-    display: flex; /* Habilita Flexbox */
-    min-height: calc(100vh - 70px); /* Altura mínima, ajusta si el header cambia de altura */
-    margin-top: 0; /* No margin-top aquí, ya está en el header */
+    display: flex;
+    height: 100vh;
 }
+
+/* =================================== */
+/* ===== BARRA LATERAL (SIDEBAR) ===== */
+/* =================================== */
 
 .admin-sidebar {
-    width: 250px; /* Ancho fijo del sidebar */
-    background-color: #34495e; /* Un tono de azul más oscuro para el sidebar */
-    color: white;
-    padding: 20px 0;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    flex-shrink: 0; /* Evita que el sidebar se encoja */
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
 }
-.admin-sidebar h2 {
-    font-size: 1.5em;
+
+.sidebar-header {
+    padding: 0 24px;
+    margin-bottom: 32px;
     text-align: center;
-    margin-bottom: 30px;
-    padding: 0 15px;
-    color: #ecf0f1; /* Color claro para el título */
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
 }
-.admin-sidebar nav ul {
+
+.sidebar-nav {
+    flex-grow: 1;
+}
+
+.sidebar-nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
-.admin-sidebar nav li a {
-    display: block;
-    padding: 15px 20px;
-    color: #ecf0f1;
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    color: var(--sidebar-text);
     text-decoration: none;
-    font-size: 1.05em;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    border-left: 5px solid transparent; /* Para el indicador activo */
-}
-.admin-sidebar nav li a i {
-    margin-right: 10px;
-    font-size: 1.2em;
-}
-.admin-sidebar nav li a:hover {
-    background-color: #2c3e50; /* Fondo más oscuro al hover */
-    border-left-color: #3498db; /* Borde azul al hover */
-    color: #ffffff;
-}
-.admin-sidebar nav li a.active {
-    background-color: #2c3e50;
-    border-left-color: #3498db; /* Indicador activo */
-    color: #ffffff;
-    font-weight: bold;
+    font-weight: 600;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease-in-out;
 }
 
+.sidebar-nav a i {
+    font-size: 1.2rem;
+}
+
+.sidebar-nav a:hover {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a.active {
+    background-color: var(--sidebar-active-bg);
+    color: #ffffff;
+    border-left-color: var(--blue-accent);
+}
+
+.sidebar-footer {
+    padding: 0 16px;
+    margin-top: 24px;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px;
+    background-color: var(--red-btn-bg);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+    background-color: var(--red-btn-hover);
+}
+
+/* =================================== */
+/* ===== CONTENIDO PRINCIPAL ===== */
+/* =================================== */
+
 .admin-main-content {
-    flex-grow: 1; /* Ocupa el resto del espacio */
-    padding: 20px 30px;
-    background-color: #f8f9fa; /* Fondo ligeramente diferente para el contenido */
+    flex-grow: 1;
+    padding: 32px;
+    overflow-y: auto;
 }
 
 .admin-section {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-bottom: 25px;
-}
-.admin-section h2 {
-    color: #2c3e50;
-    border-bottom: 2px solid #e0e0e0;
-    padding-bottom: 12px;
-    margin-bottom: 25px;
-    font-size: 1.8em;
-    display: flex;
-    align-items: center;
-}
-.admin-section h2 i {
-    margin-right: 10px;
+    background-color: var(--card-bg);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    margin-bottom: 32px;
 }
 
-/* --- Tablas --- */
-.table-responsive {
-    overflow-x: auto; /* Para tablas que exceden el ancho en móviles */
+.admin-section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-text);
+    margin-top: 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
 }
+
+/* =================================== */
+/* ===== TABLAS Y COMPONENTES ===== */
+/* =================================== */
+
+.table-responsive {
+    overflow-x: auto;
+}
+
 .admin-table {
     width: 100%;
-    border-collapse: separate; /* Para border-radius */
-    border-spacing: 0; /* Elimina espacio entre celdas */
-    margin-top: 15px;
-    border-radius: 8px; /* Bordes redondeados para la tabla */
-    overflow: hidden; /* Asegura que los bordes redondeados se apliquen */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-collapse: collapse;
+    font-size: 0.9rem;
 }
+
 .admin-table th, .admin-table td {
-    padding: 12px 15px;
+    padding: 12px 16px;
     text-align: left;
-    font-size: 0.95em;
-    vertical-align: middle; /* Alineación vertical */
-}
-.admin-table th {
-    background-color: #f4f7f6; /* Color de cabecera más suave */
-    font-weight: 600; /* Más negrita */
-    color: #555;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.admin-table tr:nth-child(even) {
-    background-color: #f9fbfb;
-}
-.admin-table tr:hover {
-    background-color: #eef1f5; /* Color al pasar el ratón */
-}
-.admin-table td:first-child { border-top-left-radius: 8px; }
-.admin-table td:last-child { border-top-right-radius: 8px; }
-.admin-table tr:last-child td:first-child { border-bottom-left-radius: 8px; }
-.admin-table tr:last-child td:last-child { border-bottom-right-radius: 8px; }
-
-
-/* --- Tags y Botones de Acción --- */
-.admin-tag {
-    background-color: #2ecc71; /* Verde más moderno */
-    color: white;
-    padding: 4px 10px;
-    border-radius: 20px; /* Más redondeado */
-    font-size: 0.8em;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.btn-action {
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-decoration: none;
-    color: white;
-    font-size: 0.9em;
-    display: inline-flex; /* Para alinear icono y texto */
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-right: 5px; /* Espacio entre botones */
-}
-.btn-action i {
-    margin-right: 5px;
-}
-.btn-info { background-color: #3498db; } /* Azul */
-.btn-info:hover { background-color: #2980b9; transform: translateY(-1px); }
-.btn-warning { background-color: #f39c12; } /* Naranja */
-.btn-warning:hover { background-color: #e67e22; transform: translateY(-1px); }
-.btn-danger { background-color: #e74c3c; } /* Rojo */
-.btn-danger:hover { background-color: #c0392b; transform: translateY(-1px); }
-.btn-primary { background-color: #1abc9c; } /* Turquesa */
-.btn-primary:hover { background-color: #16a085; transform: translateY(-1px); }
-.btn-secondary { background-color: #95a5a6; } /* Gris */
-.btn-secondary:hover { background-color: #7f8c8d; transform: translateY(-1px); }
-.btn-success { background-color: #28a745; } /* Verde para guardar/éxito */
-.btn-success:hover { background-color: #218838; }
-
-/* --- Mensajes Flash --- */
-.flash-messages-container {
-    margin-bottom: 20px;
-    margin-top: 0 !important; /* Anulamos el margin-top del estilo inline original */
-    padding: 0 0px;
-}
-.flash-message {
-    padding: 12px 20px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    font-size: 0.95em;
-    border: 1px solid transparent;
-}
-.flash-message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border-color: #c3e6cb;
-}
-.flash-message.error, .flash-message.danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border-color: #f5c6cb;
-}
-.flash-message.warning {
-    background-color: #fff3cd;
-    color: #856404;
-    border-color: #ffeeba;
-}
-.flash-message.info {
-    background-color: #d1ecf1;
-    color: #0c5460;
-    border-color: #bee5eb;
-}
-
-/* --- Detalle de Usuario --- */
-.user-detail-card {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-top: 20px;
-}
-.user-detail-card h3 {
-    color: #2c3e50;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-.user-info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos columnas */
-    gap: 15px;
-    margin-bottom: 20px;
-}
-.user-info-grid div {
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-    border: 1px solid #eee;
-}
-.user-info-grid strong {
-    color: #555;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.service-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 15px;
-}
-.service-list li {
-    background-color: #f8f9fa;
-    padding: 10px 15px;
-    border-radius: 5px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Para separar el texto y el botón */
-    border: 1px solid #eee;
-}
-.service-list li strong {
-    color: #2c3e50;
-    margin-right: 10px;
-}
-.btn-toggle-service {
-    background-color: #6c757d; /* Gris para el toggle */
-    font-size: 0.85em;
-    padding: 5px 10px;
-}
-.btn-toggle-service:hover {
-    background-color: #5a6268;
-}
-
-/* --- Formulario de Edición --- */
-.admin-form .form-group {
-    margin-bottom: 20px;
-}
-.admin-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #555;
-}
-.admin-form input[type="text"],
-.admin-form input[type="email"],
-.admin-form select,
-.admin-form textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box; /* Incluye padding y border en el ancho total */
-}
-.admin-form input[type="checkbox"] {
-    margin-right: 10px;
-    transform: scale(1.2); /* Hace el checkbox un poco más grande */
-}
-.service-toggle-group {
-    display: flex;
-    align-items: center;
-    background-color: #f0f3f6;
-    padding: 10px 15px;
-    border-radius: 5px;
-    border: 1px solid #e0e0e0;
-}
-.service-toggle-group label {
-    margin-bottom: 0;
-    flex-grow: 1; /* Ocupa el espacio restante */
-}
-.status-indicator {
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8em;
-    font-weight: bold;
-    color: white;
-    margin-left: 10px;
-}
-.status-indicator.active {
-    background-color: #28a745; /* Verde */
-}
-.status-indicator.inactive {
-    background-color: #dc3545; /* Rojo */
-}
-
-/* --- Responsive para el panel de administración --- */
-@media (max-width: 992px) { /* Tabletas */
-    .admin-layout-container {
-        flex-direction: column; /* Apila sidebar y contenido */
-    }
-    .admin-sidebar {
-        width: 100%; /* Sidebar ocupa todo el ancho */
-        padding: 15px 0;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .admin-sidebar nav ul {
-        display: flex; /* Elementos del menú en fila */
-        justify-content: space-around; /* Espacia los elementos */
-        flex-wrap: wrap; /* Permite que se envuelvan si no caben */
-    }
-    .admin-sidebar nav li {
-        margin: 0 5px;
-    }
-    .admin-sidebar nav li a {
-        padding: 10px 15px;
-        border-left: none; /* Quita el borde izquierdo */
-        border-bottom: 3px solid transparent; /* Nuevo indicador inferior */
-    }
-    .admin-sidebar nav li a.active {
-        border-bottom-color: #3498db;
-        border-left-color: transparent; /* Asegura que no haya borde lateral */
-    }
-    .admin-main-content {
-        padding: 20px;
-    }
-    .user-info-grid {
-        grid-template-columns: 1fr; /* Una sola columna en móviles */
-    }
-}
-
-@media (max-width: 768px) { /* Móviles */
-    .admin-header {
-        flex-direction: column;
-        padding: 10px;
-    }
-    .admin-header h1 {
-        margin-bottom: 10px;
-        font-size: 1.5em;
-    }
-    .admin-header .logout-btn {
-        padding: 8px 15px;
-        font-size: 0.9em;
-    }
-    .admin-section {
-        padding: 15px;
-        margin-bottom: 15px;
-        border-radius: 0;
-        box-shadow: none;
-    }
-    .admin-section h2 {
-        font-size: 1.4em;
-        margin-bottom: 15px;
-        padding-bottom: 8px;
-    }
-    .admin-table th, .admin-table td {
-        padding: 8px;
-        font-size: 0.85em;
-    }
-    .admin-table {
-        border-radius: 0;
-    }
-    .btn-action {
-        padding: 5px 10px;
-        font-size: 0.8em;
-    }
-    .flash-message {
-        padding: 10px 15px;
-        font-size: 0.9em;
-    }
-}
-
-@media (max-width: 480px) { /* Móviles muy pequeños */
-    .admin-header {
-        padding: 8px;
-    }
-    .admin-header h1 {
-        font-size: 1.3em;
-    }
-    .admin-header .logout-btn {
-        padding: 6px 12px;
-        font-size: 0.8em;
-    }
-    .admin-main-content {
-        padding: 10px;
-    }
-    .admin-sidebar nav ul {
-        flex-direction: column; /* Apila los elementos del menú en móviles muy pequeños */
-        align-items: flex-start;
-    }
-    .admin-sidebar nav li {
-        margin: 0;
-        width: 100%; /* Ocupa todo el ancho disponible */
-    }
-}
-/* Estilos para los indicadores de estado Activo/Inactivo */
-.status-indicator {
-    display: inline-block;
-    padding: 0.2em 0.6em;
-    border-radius: 0.25rem;
-    font-size: 0.75em;
-    font-weight: bold;
-    text-align: center;
+    border-bottom: 1px solid var(--border-color);
     white-space: nowrap;
-    vertical-align: middle;
 }
 
-.active-status {
-    background-color: #28a745; /* Verde */
-    color: white;
+.admin-table th {
+    font-weight: 600;
+    color: var(--secondary-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.inactive-status {
-    background-color: #6c757d; /* Gris */
-    color: white;
-}
-
-/* Estilos para los botones de acción en tablas */
-.btn-action {
-    padding: 0.3em 0.6em;
-    font-size: 0.85em;
-    border-radius: 0.25rem;
-    text-decoration: none;
-    display: inline-block;
-    margin: 2px;
-    cursor: pointer;
-    border: 1px solid transparent; /* Para que el borde no mueva el contenido al pasar el ratón */
-}
-
-.btn-action.btn-info {
-    background-color: #17a2b8;
-    color: white;
-}
-.btn-action.btn-info:hover {
-    background-color: #138496;
-}
-
-.btn-action.btn-warning {
-    background-color: #ffc107;
-    color: #212529; /* Color oscuro para contraste */
-}
-.btn-action.btn-warning:hover {
-    background-color: #e0a800;
-}
-
-.btn-action.btn-danger {
-    background-color: #dc3545;
-    color: white;
-}
-.btn-action.btn-danger:hover {
-    background-color: #c82333;
-}
-
-.btn-action.btn-success { /* Para el botón "Activar" de usuario */
-    background-color: #28a745;
-    color: white;
-}
-.btn-action.btn-success:hover {
-    background-color: #218838;
-}
-
-/* Para el botón de "Desactivar" del servicio en admin_detail, si lo mantienes así */
-.btn-sm.btn-toggle-service { /* Asegúrate que esta clase exista en tu CSS */
-    font-size: 0.75em;
-    padding: 0.2em 0.4em;
-}
-
-/* Estilos para el grid de información del usuario en admin_detail.html */
-.user-info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.user-info-grid div {
-    padding: 5px 0;
-    border-bottom: 1px dashed #e0e0e0;
-}
-.user-info-grid div:last-child {
+.admin-table tr:last-child td {
     border-bottom: none;
 }
 
-.user-info-grid strong {
-    color: #333;
-    min-width: 120px; /* Asegura alineación si los labels son de largo variable */
+.admin-table tr:hover {
+    background-color: #f8fafc;
+}
+
+.status-indicator, .admin-tag {
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
     display: inline-block;
 }
 
-/* Estilos para las tarjetas de servicios */
-.list-group {
-    list-style: none;
-    padding: 0;
+.status-indicator.active-status {
+    background-color: #dcfce7;
+    color: #166534;
 }
 
-.list-group-item {
-    background-color: #fff;
-    border: 1px solid rgba(0,0,0,.125);
-    border-radius: .25rem;
-    margin-bottom: 8px;
-    padding: 12px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+.admin-tag { /* Para el rol de admin */
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
-.list-group-item strong {
-    color: #007bff;
+.btn-action {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    margin-right: 8px;
 }
 
-.badge.bg-primary {
-    background-color: #007bff !important;
+.btn-action:hover {
+    opacity: 0.85;
+}
+
+.btn-info { background-color: #2563eb; }
+.btn-warning { background-color: #f59e0b; }
+.btn-danger { background-color: #dc2626; }
+.btn-success { background-color: #16a34a; }
+
+/* MENSAJES FLASH */
+.flash-messages-container {
+    margin-bottom: 24px;
+}
+.flash-message {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+.flash-message.success { background-color: #dcfce7; color: #166534; }
+.flash-message.danger, .flash-message.error { background-color: #fee2e2; color: #991b1b; }
+.flash-message.info { background-color: #dbeafe; color: #1e40af; }
+
+
+/* =================================== */
+/* ===== ESTILOS RESPONSIVE ===== */
+/* =================================== */
+
+@media (max-width: 992px) {
+    .admin-sidebar {
+        width: 220px;
+    }
+    .admin-sidebar .sidebar-header h3, .sidebar-nav span, .logout-btn span {
+        /* Opcional: Ocultar texto en tablets para un menú de solo iconos */
+        /* display: none; */ 
+    }
+}
+
+@media (max-width: 768px) {
+    /* En esta versión, simplemente ocultamos el sidebar. */
+    /* Para una mejor experiencia se necesitaría un botón "hamburguesa" y JavaScript */
+    .admin-sidebar {
+        display: none;
+    }
+
+    .admin-main-content {
+        padding: 16px;
+    }
+
+    .admin-section h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Botón Hamburguesa */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1030; /* El botón debe estar por encima del sidebar */
+    background-color: var(--sidebar-bg);
     color: white;
-    padding: .4em .6em;
-    border-radius: 10rem;
+    border: none;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.75rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Overlay para oscurecer el fondo */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1010; /* El overlay por debajo del sidebar */
+}
+
+.overlay.is-visible {
+    display: block;
+}
+
+
+/* =================================== */
+/* ===== ESTILOS RESPONSIVE (ACTUALIZADOS) ===== */
+/* =================================== */
+
+/* --- Para Tablets (hasta 992px de ancho) --- */
+@media (max-width: 992px) {
+    .admin-sidebar {
+        width: 220px;
+    }
+}
+
+/* --- Para Celulares (hasta 768px de ancho) --- */
+@media (max-width: 768px) {
+    /* Mostramos el botón hamburguesa */
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    /* Modificamos la barra lateral para que se deslice desde afuera */
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 260px; /* Le devolvemos su ancho original */
+        z-index: 1020;
+        transform: translateX(-100%); /* Empieza oculta a la izquierda */
+        transition: transform 0.3s ease-in-out;
+    }
+
+    /* Cuando tenga la clase 'is-visible', se desliza a la vista */
+    .admin-sidebar.is-visible {
+        transform: translateX(0);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .admin-main-content {
+        padding: 16px;
+        padding-top: 70px; /* Dejamos espacio para el botón fijo */
+    }
+
+    .admin-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .actions-cell {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .actions-cell .btn-action {
+        margin-right: 0;
+    }
 }
