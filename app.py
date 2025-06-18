@@ -110,8 +110,11 @@ def seed_db_command():
     servicios_ejemplo = [
         {"name": "Internet Fibra Óptica 300Mbps", "description": "Conexión de alta velocidad para hogar y teletrabajo.", "price": 35000.00, "type": "Internet"},
         {"name": "Telefonía Fija Ilimitada", "description": "Llamadas ilimitadas a números fijos nacionales.", "price": 15000.00, "type": "Telefonía"},
-        {"name": "TV Cable Premium", "description": "Paquete con más de 100 canales HD, incluye deportes y películas.", "price": 25000.00, "type": "TV"}
-    ]
+        {"name": "TV Cable Premium", "description": "Paquete con más de 100 canales HD, incluye deportes y películas.", "price": 25000.00, "type": "TV"},
+        {"name": "Internet Fibra Óptica 1Gbps", "description": "Conexión ultra rápida para gaming y streaming 4K.", "price": 50000.00, "type": "Internet"},
+        {"name": "TV Cable Básico", "description": "Paquete con 50 canales esenciales.", "price": 18000.00, "type": "TV"}
+]
+    
 
     for s_data in servicios_ejemplo:
         if Service.query.filter_by(name=s_data["name"]).first():
