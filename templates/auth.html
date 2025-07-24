@@ -9,23 +9,51 @@
             <h1 class="h3 mb-3 fw-bold text-white text-center">Iniciar Sesión</h1>
             <p class="text-white-50 text-center mb-4">Bienvenido de nuevo</p>
 
-            
+            {# --- FLASH MESSAGES (Opcional, pero recomendado para mensajes de éxito/error general) --- #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-container mb-3">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {# --- FIN FLASH MESSAGES --- #}
 
             <form action="{{ url_for('login') }}" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <div class="form-floating mb-3">
                     {{ form.username(class="form-control", id="login-username", placeholder="Usuario") }}
                     {{ form.username.label(for="login-username") }}
+                    {# --- MOSTRAR ERRORES DEL CAMPO USERNAME --- #}
+                    {% if form.username.errors %}
+                        {% for error in form.username.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {# --- FIN ERRORES USERNAME --- #}
                 </div>
                 <div class="form-floating mb-3">
                     {{ form.password(class="form-control", id="login-password", placeholder="Contraseña") }}
                     {{ form.password.label(for="login-password") }}
+                    {# --- MOSTRAR ERRORES DEL CAMPO PASSWORD --- #}
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {# --- FIN ERRORES PASSWORD --- #}
                 </div>
                 <div class="form-check text-start my-3">
                     {{ form.remember_me(class="form-check-input") }}
                     {{ form.remember_me.label(class="form-check-label text-white") }}
                 </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>                <p class="mt-4 text-center">
+                <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>
+                <p class="mt-4 text-center">
                     <a href="#" id="goto-register" class="text-white-50">¿No tienes cuenta? Regístrate</a>
                 </p>
             </form>
@@ -42,20 +70,49 @@
                 <div class="form-floating mb-3">
                     {{ form_register.username(class="form-control", id="reg-username", placeholder="Usuario") }}
                     {{ form_register.username.label(for="reg-username") }}
+                    {# --- MOSTRAR ERRORES DEL CAMPO REGISTER USERNAME --- #}
+                    {% if form_register.username.errors %}
+                        {% for error in form_register.username.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {# --- FIN ERRORES REGISTER USERNAME --- #}
                 </div>
-                 <div class="form-floating mb-3">
+                <div class="form-floating mb-3">
                     {{ form_register.email(class="form-control", id="reg-email", placeholder="Email") }}
                     {{ form_register.email.label(for="reg-email") }}
+                    {# --- MOSTRAR ERRORES DEL CAMPO REGISTER EMAIL --- #}
+                    {% if form_register.email.errors %}
+                        {% for error in form_register.email.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {# --- FIN ERRORES REGISTER EMAIL --- #}
                 </div>
                 <div class="form-floating mb-3">
                     {{ form_register.password(class="form-control", id="reg-password", placeholder="Contraseña") }}
                     {{ form_register.password.label(for="reg-password") }}
+                    {# --- MOSTRAR ERRORES DEL CAMPO REGISTER PASSWORD --- #}
+                    {% if form_register.password.errors %}
+                        {% for error in form_register.password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {# --- FIN ERRORES REGISTER PASSWORD --- #}
                 </div>
                 <div class="form-floating mb-3">
                     {{ form_register.confirm_password(class="form-control", id="reg-confirm", placeholder="Confirmar Contraseña") }}
                     {{ form_register.confirm_password.label(for="reg-confirm") }}
+                    {# --- MOSTRAR ERRORES DEL CAMPO REGISTER CONFIRM_PASSWORD --- #}
+                    {% if form_register.confirm_password.errors %}
+                        {% for error in form_register.confirm_password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {# --- FIN ERRORES REGISTER CONFIRM_PASSWORD --- #}
                 </div>
-                    <button type="submit" class="btn btn-success w-100 py-2">Registrarse</button>                <p class="mt-4 text-center">
+                <button type="submit" class="btn btn-success w-100 py-2">Registrarse</button>
+                <p class="mt-4 text-center">
                     <a href="#" id="goto-login" class="text-white-50">¿Ya tienes cuenta? Inicia Sesión</a>
                 </p>
             </form>
