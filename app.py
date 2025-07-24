@@ -1,11 +1,6 @@
 # C:\Users\Juan Avedano\Desktop\Facultad\Proyecto\app.py
 
 import os
-import pandas as pd
-import io
-from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
-from openpyxl.utils import get_column_letter
-from openpyxl.cell.cell import MergedCell
 from flask import send_file
 from flask import Flask, render_template, redirect, url_for, flash, request, Blueprint, current_app
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
@@ -21,9 +16,7 @@ from sqlalchemy import func # ¡Importante!
 #from flask_wtf import FlaskForm
 #from wtforms import SubmitField
 # Importar el blueprint del customer_dashboard
-from customer_dashboard.views import customer_dashboard_bp
 
-from admin.views import admin_bp #
 
 # === IMPORTAR la instancia 'db' declarada en models.py ===
 from models import db, User, Service, Complaint, user_services_association # <-- Importa 'db' también, junto con los modelos
@@ -49,6 +42,38 @@ login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 login_manager.init_app(app)
 migrate = Migrate(app, db)
+
+@app.cli.command("seed-data")
+def seed_data_command():
+    """Crea el usuario admin y servicios de ejemplo si no existen."""
+    with app.app_context():
+        try:
+            print("Verificando y creando usuario admin y servicios de ejemplo...")
+            if not User.query.filter_by(username='admin').first():
+                hashed_password = bcrypt.generate_password_hash('admin123').decode('utf-8')
+                admin_user = User(username='admin', email='admin@example.com', password=hashed_password, is_admin=True, is_active=True)
+                db.session.add(admin_user)
+                db.session.commit()
+                print("Usuario admin creado automáticamente.")
+            else:
+                print("El usuario admin ya existe, no se creó.")
+
+            if not Service.query.first():
+                service1 = Service(name="Internet Fibra Óptica 300Mbps", description="Conexión de alta velocidad para hogar y teletrabajo.", price=35000.00)
+                service2 = Service(name="Telefonía Fija Ilimitada", description="Llamadas ilimitadas a números fijos nacionales.", price=15000.00)
+                service3 = Service(name="TV Cable Premium", description="Paquete con más de 100 canales HD, incluye deportes y películas.", price=25000.00)
+                db.session.add_all([service1, service2, service3])
+                db.session.commit()
+                print("Servicios de ejemplo creados automáticamente.")
+            else:
+                print("Los servicios ya existen, no se crearon nuevos.")
+            print("Proceso de seeding completado.")
+
+        except Exception as e:
+            print(f"Error durante el seeding de datos: {e}")
+            import traceback
+            traceback.print_exc()
+
 
 # Define un User mock para el modo simulación si no hay DB real
 class MockUser(UserMixin):
@@ -205,6 +230,11 @@ def index():
             return redirect(url_for('customer_dashboard.index'))
     # Si no está autenticado, lo mandamos a la página de login
     return redirect(url_for('login'))
+
+from customer_dashboard.views import customer_dashboard_bp
+
+from admin.views import admin_bp 
+
 
 # --- Registro de Blueprints ---
 # ELIMINA ESTA LÍNEA de admin/views.py
