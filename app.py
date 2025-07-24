@@ -22,6 +22,7 @@ print("=== DEBUG: app.py ha sido recargado y ejecutado ===") # Este print se eje
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
+bcrypt = Bcrypt()
 # Definición de la función create_app
 def create_app():
     # === INSTANCIA DE LA APP Y CONFIGURACIÓN ===
@@ -40,7 +41,7 @@ def create_app():
     
     # Bcrypt inicializado aquí, dentro de create_app
     # Para acceder a él fuera de create_app, usaremos current_app.extensions['flask-bcrypt']
-    Bcrypt(app)
+    bcrypt.init_app(app)
 
  
     login_manager.init_app(app)
@@ -111,9 +112,9 @@ def create_app():
         if form.validate_on_submit():
             user = User.query.filter_by(username=form.username.data).first()
             if user:
-                bcrypt_from_context = current_app.extensions['flask-bcrypt'][0]
+            
                 # Usa la instancia de bcrypt que se inicializó dentro de create_app
-                if bcrypt_from_context.check_password_hash(user.password, form.password.data):
+                if bcrypt.check_password_hash(user.password, form.password.data):
                     if user.is_active:
                         login_user(user, remember=form.remember_me.data)
                         flash('Inicio de sesión exitoso!', 'success')
@@ -147,8 +148,8 @@ def create_app():
                 return render_template('auth.html', title='Registrarse', form=LoginForm(), form_register=form_register)
 
             # Usa la instancia de bcrypt de create_app
-            bcrypt_from_context = current_app.extensions['flask-bcrypt'][0]
-            hashed_password = bcrypt_from_context.generate_password_hash(form_register.password.data).decode('utf-8')
+        
+            hashed_password = bcrypt.generate_password_hash(form_register.password.data).decode('utf-8')
             user = User(username=form_register.username.data, email=form_register.email.data, password=hashed_password, is_active=True)
             db.session.add(user)
             db.session.commit()
@@ -197,11 +198,11 @@ def seed_data_command():
             print("Verificando y creando usuario admin y servicios de ejemplo...")
             # Accede a bcrypt a través de current_app.extensions si se inicializó dentro de create_app
             # Flask-Bcrypt guarda su instancia bajo la clave 'flask-bcrypt' en app.extensions
-            bcrypt_from_app = current_app.extensions['flask-bcrypt'] 
+            
 
             if not User.query.filter_by(username='admin').first():
                 # Usa la instancia de bcrypt obtenida del contexto
-                hashed_password = bcrypt_from_app.generate_password_hash('admin123').decode('utf-8')
+                hashed_password = bcrypt.generate_password_hash('admin123').decode('utf-8')
                 admin_user = User(username='admin', email='admin@example.com', password=hashed_password, is_admin=True, is_active=True)
                 db.session.add(admin_user)
                 db.session.commit()
