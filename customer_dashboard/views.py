@@ -1,16 +1,19 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request, Response, send_file
 
-from flask_login import login_required, current_user
+
 from sqlalchemy import extract
 from datetime import datetime, timedelta
 from flask_wtf.csrf import validate_csrf
 import io
-from fpdf import FPDF
 from datetime import timedelta 
 from io import BytesIO
-
+from flask import current_app
 from models import db, User, Service, Invoice 
 from forms import ContractServiceForm, ModifyServiceForm, ChangePasswordForm
+import os
+from flask import Blueprint, flash, redirect, url_for, Response, current_app, send_file
+from flask_login import login_required, current_user
+from fpdf import FPDF # Asegúrate de tener fpdf2 instalado: pip install fpdf2
 
 
 
@@ -39,18 +42,7 @@ def index():
         all_services=all_services,
         contracted_service_ids=contracted_service_ids
     )
-import os
-from datetime import datetime, timedelta
-from io import BytesIO # Usaremos BytesIO de io para send_file
 
-from flask import Blueprint, flash, redirect, url_for, Response, current_app, send_file
-from flask_login import login_required, current_user
-from fpdf import FPDF # Asegúrate de tener fpdf2 instalado: pip install fpdf2
-
-# Asumo que tu Blueprint se llama 'customer_dashboard_bp'
-# y que tienes importado current_app, login_required, current_user, etc.
-
-customer_dashboard_bp = Blueprint('customer_dashboard', __name__) # Si no lo tienes, descomenta y ajusta
 
 @customer_dashboard_bp.route('/invoice/download')
 @login_required
