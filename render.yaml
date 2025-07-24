@@ -2,7 +2,7 @@ services:
   - type: web
     name: tu-app-flask # El nombre de tu servicio en Render
     env: python
-    pythonVersion: 3.13.3
+    pythonVersion: 3.11.11
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     preDeployCommand: flask db upgrade && flask seed-data
