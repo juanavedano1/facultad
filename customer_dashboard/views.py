@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, request, Response, send_file
+from flask import Blueprint, render_template, flash, redirect, url_for, request, Response, send_file,jsonify
 
 
 from sqlalchemy import extract
