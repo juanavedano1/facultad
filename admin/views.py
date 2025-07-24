@@ -1,3 +1,4 @@
+from app import bcrypt_instance
 from flask import (Blueprint, render_template, flash, redirect, url_for, 
                    request, jsonify, current_app, send_file)
 from flask_login import login_required, current_user
@@ -6,7 +7,6 @@ from forms import UserEditForm, ToggleUserStatusForm
 from decorators import admin_required # Suponiendo que admin_required está en app.py
 from sqlalchemy import func
 import pandas as pd
-import io
 from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
 from openpyxl.utils import get_column_letter
 from openpyxl.cell.cell import MergedCell
@@ -266,7 +266,6 @@ def edit_user(user_id):
                 user.username = form.username.data
                 user.email = form.email.data
                 if form.password.data:
-                    bcrypt_instance = current_app.extensions['flask-bcrypt'][0]
                     user.password = bcrypt_instance.generate_password_hash(form.password.data).decode('utf-8')
 
                 if 'is_active' in form and current_user.id != user_id:
