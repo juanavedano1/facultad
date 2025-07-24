@@ -5,6 +5,7 @@ import re # Importamos 're' para una mejor ocultación de contraseña en el log
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
+    #e5f21623a4b7e97c290fa7c24a15c32f
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'una-clave-super-secreta-y-dificil-de-adivinar-para-desarrollo'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SIMULATION_MODE = os.environ.get('SIMULATION_MODE', 'False').lower() == 'true'

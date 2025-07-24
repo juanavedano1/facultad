@@ -1,52 +1,46 @@
 {% extends "customer_dashboard/base_dashboard.html" %}
 
-{% block title %}Contratar Servicio{% endblock %}
+{% block dashboard_title %}Contratar Servicio{% endblock %}
 
 {% block dashboard_content %}
-<div class="contract-service-page-wrapper"> {# Nuevo contenedor para centrar y estilizar la tarjeta #}
-    <div class="card contract-service-card"> {# Contenedor con estilos de tarjeta #}
-        <div class="card-header"> {# Opcional: para un encabezado de tarjeta #}
-            <h2><i class="bi bi-box-seam"></i> Contratar Nuevos Servicios</h2>
-            <p>Selecciona los servicios que deseas añadir a tu cuenta.</p>
-        </div>
-        <div class="card-body"> {# Cuerpo de la tarjeta #}
-            {# Mensajes flash #}
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="messages-container">
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
+<div class="card dashboard-card">
+    <div class="card-header h5">
+        <i class="bi bi-box-seam me-2"></i>Catálogo de Servicios Disponibles
+    </div>
+    <div class="card-body">
+        <p class="card-text text-muted">Explora nuestros servicios. Los que ya tienes contratados aparecen resaltados.</p>
 
-            <form method="POST" class="contract-service-form">
-                {{ form.hidden_tag() }}
+        <div class="row mt-4">
+            {% for service in all_services %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    
+                    {% set is_contracted = service.id in contracted_service_ids %}
+                    
+                    <div class="card dashboard-card h-100 service-catalog-card {{ 'contracted' if is_contracted }}">
+                        
+                        {% if is_contracted %}
+                            <span class="badge bg-success contracted-badge">Contratado</span>
+                        {% endif %}
 
-                <div class="form-group mb-3"> {# Añadido mb-3 para margen inferior #}
-                    {{ form.services.label(class="form-label") }} {# Cambiado a form-label #}
-                    <div class="checkbox-list">
-                        {% for subfield in form.services %}
-                            <div class="form-check">
-                                {{ subfield(class="form-check-input") }}
-                                {{ subfield.label(class="form-check-label") }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {% if form.services.errors %}
-                        <div class="invalid-feedback d-block">
-                            {% for error in form.services.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+                        <div class="card-body text-center d-flex flex-column">
+                            <i class="bi {{ 'bi-wifi' if service.type == 'Internet' else 'bi-telephone' if service.type == 'Telefonía' else 'bi-tv' }} fs-1 mb-3"></i>
+                            
+                            <h5 class="card-title">{{ service.name }}</h5>
+                            <p class="card-text text-muted small flex-grow-1">{{ service.description }}</p>
+                            <p class="h4 fw-light mb-3">${{ "%.2f"|format(service.price) }}</p>
+                            
+                            {% if is_contracted %}
+                                <a href="{{ url_for('customer_dashboard.service_management') }}" class="btn btn-secondary mt-auto">Gestionar</a>
+                            {% else %}
+                                <form action="{{ url_for('customer_dashboard.add_service', service_id=service.id) }}" method="POST">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-primary mt-auto w-100">Contratar</button>
+                                </form>
+                            {% endif %}
                         </div>
-                    {% endif %}
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    {{ form.submit(class="btn btn-primary mt-3") }} {# Añadido mt-3 para margen superior #}
-                </div>
-            </form>
+            {% endfor %}
         </div>
     </div>
 </div>

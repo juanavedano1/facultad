@@ -1,0 +1,65 @@
+{% extends "base_auth.html" %}
+{% block body_class %}auth-bg{% endblock %}
+{% block title %}Bienvenido al Portal de Clientes{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div id="login-form" class="form-wrapper active">
+        <div class="form-box">
+            <h1 class="h3 mb-3 fw-bold text-white text-center">Iniciar Sesión</h1>
+            <p class="text-white-50 text-center mb-4">Bienvenido de nuevo</p>
+
+            
+
+            <form action="{{ url_for('login') }}" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="form-floating mb-3">
+                    {{ form.username(class="form-control", id="login-username", placeholder="Usuario") }}
+                    {{ form.username.label(for="login-username") }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form.password(class="form-control", id="login-password", placeholder="Contraseña") }}
+                    {{ form.password.label(for="login-password") }}
+                </div>
+                <div class="form-check text-start my-3">
+                    {{ form.remember_me(class="form-check-input") }}
+                    {{ form.remember_me.label(class="form-check-label text-white") }}
+                </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>                <p class="mt-4 text-center">
+                    <a href="#" id="goto-register" class="text-white-50">¿No tienes cuenta? Regístrate</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div id="register-form" class="form-wrapper">
+        <div class="form-box">
+            <h1 class="h3 mb-3 fw-bold text-white text-center">Crear Cuenta</h1>
+            <p class="text-white-50 text-center mb-4">Únete a nuestro portal</p>
+            
+            <form action="{{ url_for('register') }}" method="post" novalidate>
+                {{ form_register.hidden_tag() }}
+                <div class="form-floating mb-3">
+                    {{ form_register.username(class="form-control", id="reg-username", placeholder="Usuario") }}
+                    {{ form_register.username.label(for="reg-username") }}
+                </div>
+                 <div class="form-floating mb-3">
+                    {{ form_register.email(class="form-control", id="reg-email", placeholder="Email") }}
+                    {{ form_register.email.label(for="reg-email") }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_register.password(class="form-control", id="reg-password", placeholder="Contraseña") }}
+                    {{ form_register.password.label(for="reg-password") }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_register.confirm_password(class="form-control", id="reg-confirm", placeholder="Confirmar Contraseña") }}
+                    {{ form_register.confirm_password.label(for="reg-confirm") }}
+                </div>
+                    <button type="submit" class="btn btn-success w-100 py-2">Registrarse</button>                <p class="mt-4 text-center">
+                    <a href="#" id="goto-login" class="text-white-50">¿Ya tienes cuenta? Inicia Sesión</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

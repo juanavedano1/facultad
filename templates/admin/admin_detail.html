@@ -1,68 +1,80 @@
-{% extends "admin/admin_dashboard.html" %}
+{% extends "admin/base_admin.html" %}
 
-{% block title %}Detalle de Usuario - Admin{% endblock %}
+{% block admin_title %}Detalle de {{ user.username }}{% endblock %}
 
-{% block admin_section_content %}
-<div class="admin-section user-detail-card">
-    <h2>Detalle del Usuario: {{ user.username }}</h2>
-    <div class="user-info-grid">
-        <div><strong>ID:</strong> {{ user.id }}</div>
-        <div><strong>Nombre de Usuario:</strong> {{ user.username }}</div>
-        <div><strong>Email:</strong> {{ user.email }}</div>
-        <div><strong>Tipo:</strong>
-            {% if user.is_admin %}
-                <span class="admin-tag">Administrador</span>
-            {% else %}
-                Cliente
-            {% endif %}
+{% block admin_content %}
+<div class="card dashboard-card">
+    <div class="card-header h5 d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-person-vcard me-2"></i>Detalle del Usuario: <strong>{{ user.username }}</strong></span>
+        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Volver a Usuarios
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="row border-bottom pb-3 mb-3">
+            <div class="col-md-6 mb-3">
+                <p class="text-muted mb-1">Nombre de Usuario</p>
+                <h6 class="fw-bold">{{ user.username }}</h6>
+            </div>
+            <div class="col-md-6 mb-3">
+                <p class="text-muted mb-1">Correo Electrónico</p>
+                <h6 class="fw-bold">{{ user.email }}</h6>
+            </div>
+            <div class="col-md-6 mb-3">
+                <p class="text-muted mb-1">Estado</p>
+                <h6>
+                    {% if user.is_active %}
+                        <span class="badge bg-success">Activo</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactivo</span>
+                    {% endif %}
+                </h6>
+            </div>
+            <div class="col-md-6 mb-3">
+                <p class="text-muted mb-1">Tipo</p>
+                <h6>
+                     {% if user.is_admin %}
+                        <span class="badge bg-primary">Administrador</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Cliente</span>
+                    {% endif %}
+                </h6>
+            </div>
         </div>
-        {# Asumiendo que User tiene estos campos #}
-        {% if user.registration_date %}<div><strong>Fecha de Registro:</strong> {{ user.registration_date.strftime('%d/%m/%Y %H:%M') }}</div>{% endif %}
-        {% if user.last_login %}<div><strong>Último Acceso:</strong> {{ user.last_login.strftime('%d/%m/%Y %H:%M') }}</div>{% endif %}
-        
-        <div>
-            <strong>Estado de Cuenta:</strong>
-            {% if user.is_active %}
-                <span class="status-indicator active-status">Activo</span>
-            {% else %}
-                <span class="status-indicator inactive-status">Inactivo</span>
-            {% endif %}
-            {# Botón para cambiar el estado de actividad del usuario #}
-            {% if not user.is_admin and user.id != current_user.id %} {# No permitir cambiar el estado de un admin o de uno mismo #}
-                <form action="{{ url_for('admin.toggle_user_active_status', user_id=user.id) }}" method="POST" style="display:inline; margin-left: 10px;">
-                    {{ toggle_form.csrf_token }} {#  ¡Esta línea asegura que el token se renderice! #}
-                    <button type="submit" class="btn-action {% if user.is_active %}btn-danger{% else %}btn-success{% endif %}"
-                            onclick="return confirm('¿Estás seguro de que quieres {% if user.is_active %}desactivar{% else %}activar{% endif %} la cuenta de {{ user.username }}?');">
-                        {% if user.is_active %}Desactivar{% else %}Activar{% endif %}
-                    </button>
-                </form>
-            {% endif %}
-        </div>
-    </div> {# Cierre de user-info-grid #}
 
-    <h3 class="mt-4">Servicios Contratados</h3>
-    {% if user_services %}
-        <ul class="list-group">
-            {% for service in user_services %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{ service.name }}</strong> {% if service.type %}({{ service.type }}){% endif %}
-                        <br>
-                        {% if service.description %}<small>{{ service.description }}</small>{% endif %}
-                    </div>
-                    {% if service.price is not none %}<span class="badge bg-primary rounded-pill">${{ "%.2f"|format(service.price) }}</span>{% endif %}
+        <h5 class="mt-4 mb-3">Servicios Contratados</h5>
+        {% if user_services %}
+            <ul class="list-group list-group-flush">
+                {% for service in user_services %}
+                <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
+                    <strong>{{ service.name }}</strong>
+                    <span class="badge bg-primary rounded-pill">${{ "%.2f"|format(service.price) }}</span>
                 </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p class="text-muted">Este usuario no tiene servicios contratados actualmente.</p>
-    {% endif %}
-
-    <div class="user-detail-actions mt-4">
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-light border-0" role="alert">
+              Este usuario no tiene servicios contratados.
+            </div>
+        {% endif %}
+    </div>
+    <div class="card-footer bg-light text-end">
+        <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-primary"><i class="bi bi-pencil-square me-1"></i>Editar Usuario</a>
+        <a href="{{ url_for('admin.exportar_excel_usuario', user_id=user.id) }}" class="btn btn-success"><i class="bi bi-file-earmark-excel me-1"></i>Exportar a Excel</a>
         
-        <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-primary"><i class="bi bi-pencil-square"></i> Editar Usuario</a>
-        <a href="{{ url_for('admin.exportar_excel_usuario', user_id=user.id) }}" class="btn btn-success"><i class="bi bi-file-earmark-excel"></i> Exportar Servicios a Excel</a>
-        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a Usuarios</a>
+        {% if not user.is_admin and user.id != current_user.id %}
+            <form action="{{ url_for('admin.toggle_user_active_status', user_id=user.id) }}" method="POST" class="d-inline">
+                {{ toggle_form.csrf_token }}
+                <button type="submit" class="btn {% if user.is_active %}btn-warning{% else %}btn-success{% endif %}">
+                    {% if user.is_active %}<i class="bi bi-person-x me-1"></i>Desactivar{% else %}<i class="bi bi-person-check me-1"></i>Activar{% endif %}
+                </button>
+            </form>
+
+            <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro? Esta acción es irreversible.');">
+                {{ toggle_form.csrf_token }}
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Eliminar Usuario</button>
+            </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

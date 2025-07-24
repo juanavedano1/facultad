@@ -1,5 +1,5 @@
 # C:\Users\Juan Avedano\Desktop\Facultad\Proyecto\models.py
-from flask_bcrypt import generate_password_hash, check_password_hash
+from datetime import datetime
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 from flask_sqlalchemy import SQLAlchemy
@@ -23,26 +23,20 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False) # Guarda la contraseña hasheada
+    password = db.Column(db.String(60), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean, default=True)
     complaints = db.relationship('Complaint', backref='complainant', lazy=True)
+
+    # Relación muchos-a-muchos con Service a través de la tabla de asociación
+    # backref='users_who_contracted' permite acceder a los usuarios desde un servicio
+    # lazy='dynamic' es útil para consultas encadenadas (ej. user.services.filter_by(...))
     services_contracted = db.relationship(
         'Service',
-        secondary='user_services_association', # Asegúrate que 'user_services_association' esté definida
+        secondary=user_services_association,
         backref=db.backref('users_who_contracted', lazy='dynamic'),
         lazy='dynamic'
     )
-
-    # === MÉTODO PARA ESTABLECER LA CONTRASEÑA HASHEADA ===
-    def set_password(self, password_to_hash):
-        """Hashea y guarda la contraseña."""
-        self.password = generate_password_hash(password_to_hash).decode('utf-8')
-
-    # === MÉTODO PARA VERIFICAR LA CONTRASEÑA ===
-    def check_password(self, password_to_check):
-        """Verifica la contraseña hasheada."""
-        return check_password_hash(self.password, password_to_check)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', 'Admin: {self.is_admin}')"
@@ -73,3 +67,12 @@ class Complaint(db.Model):
 
     def __repr__(self):
         return f"Complaint('{self.subject}', '{self.status}')"
+    
+class Invoice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float, nullable=False)
+    billing_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Invoice {self.id} - Amount: {self.amount}>'

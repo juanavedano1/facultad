@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block body_class %}dashboard-bg{% endblock %} 
+{% block title %}{% block admin_title %}Panel de Administración{% endblock %}{% endblock %}
+
+{% block head_extra %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-3 p-md-4">
+    <div class="row g-4">
+
+        <aside class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-header fw-bold h5 bg-dark text-white">
+                    <i class="bi bi-shield-lock me-2"></i>Admin Panel
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action {% if active_tab == 'overview' %}active{% endif %}"><i class="bi bi-grid-1x2-fill me-2"></i>Resumen</a>
+                    <a href="{{ url_for('admin.manage_users') }}" class="list-group-item list-group-item-action {% if active_tab == 'users' %}active{% endif %}"><i class="bi bi-people-fill me-2"></i>Gestión de Usuarios</a>
+                    <a href="#" class="list-group-item list-group-item-action {% if active_tab == 'settings' %}active{% endif %}"><i class="bi bi-gear-fill me-2"></i>Configuración</a>
+                    <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action text-danger"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="col-lg-9">
+            {% block admin_content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,63 +1,41 @@
 {% extends "customer_dashboard/base_dashboard.html" %}
 
-{% block title %}Modificar Servicio{% endblock %}
+{% block dashboard_title %}Modificar Servicio{% endblock %}
 
 {% block dashboard_content %}
-<div class="contract-service-page-wrapper">
-    <div class="contract-service-card">
-        <div class="card-header">
-            <h2><i class="bi bi-pencil-square"></i> Modificar Servicio: {{ service.name }}</h2>
-            <p>Selecciona un nuevo plan para tu servicio actual.</p>
-        </div>
-        <div class="card-body">
-            {# Mensajes flash #}
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="messages-container">
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
+
+<div class="card dashboard-card">
+    <div class="card-header h5">
+        <i class="bi bi-pencil-square me-2"></i>Modificar Servicio: {{ service.name }}
+    </div>
+    <div class="card-body">
+        <p class="card-text text-muted text-center">Selecciona un nuevo plan para tu servicio actual.</p>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <form method="POST" class="mt-4"  id="modify-service-form">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.plan.label(class="form-label fw-bold") }}
+                        {{ form.plan(class="form-select") }}
+                        <div class="form-text mt-2">
+                            Tu plan actual es: <strong>{{ service.name }} (${{ "%.2f"|format(service.price) }})</strong>
+                        </div>
                     </div>
-                {% endif %}
-            {% endwith %}
 
-            <form method="POST" action="{{ url_for('customer_dashboard.modify_service', service_id=service.id) }}" class="p-4">
-                {{ form.hidden_tag() }} {# Incluye el CSRF token #}
+                    <hr class="my-4">
 
-                <div class="form-group mb-3">
-                    {{ form.plan.label(class="form-label") }}
-                    {{ form.plan(class="form-control") }}
-                    {% if form.plan.errors %}
-                        <div class="invalid-feedback d-block">
-                            {% for error in form.plan.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    <small class="form-text text-muted">Tu plan actual es: <strong>{{ service.name }} (${{ "%.2f"|format(service.price) }})</strong> (Tipo: {{ service.type }})</small>
-                </div>
-
-                {# Si hubieras añadido un campo de descripción editable, aquí lo renderizarías: #}
-                {# <div class="form-group mb-3">
-                    {{ form.description.label(class="form-label") }}
-                    {{ form.description(class="form-control", rows=3) }}
-                    {% if form.description.errors %}
-                        <div class="invalid-feedback d-block">
-                            {% for error in form.description.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div> #}
-
-                <div class="d-grid gap-2">
-                    {{ form.submit(class="btn btn-primary btn-block") }}
-                    <a href="{{ url_for('customer_dashboard.service_management') }}" class="btn btn-outline-secondary btn-block">
-                        <i class="bi bi-arrow-left"></i> Volver a Mis Servicios
-                    </a>
-                </div>
-            </form>
+                   {{ form.submit(class="btn btn-primary px-4", value="Guardar Cambios del Servicio") }}
+                    
+                    <a href="{{ url_for('customer_dashboard.service_management') }}" class="btn btn-outline-secondary px-4 ms-2">Volver a Mis Servicios</a>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+{% block scripts_extra %}
+    <script src="{{ url_for('static', filename='js/form-spinner.js') }}"></script>
+{% endblock %}
+
 {% endblock %}

@@ -1,143 +1,190 @@
-{% extends "customer_dashboard/base_dashboard.html" %} {# Cambiado para heredar de base_dashboard.html #}
+{% extends "customer_dashboard/base_dashboard.html" %}
 
-{% block dashboard_title %}Mi Panel de Control{% endblock %} {# Opcional: define un título específico para esta página del dashboard #}
+{% block dashboard_title %}Resumen del Panel{% endblock %}
 
-{% block dashboard_content %} {# Todo este contenido se moverá DENTRO de este bloque #}
-    {# Mensaje de bienvenida y resumen #}
-    <section class="welcome-section">
-        <h2>¡Hola, {{ current_user.username }}! <i class="bi bi-emoji-smile"></i></h2>
-        <p>Bienvenido a tu portal de autogestión de Customer Portal. Aquí puedes gestionar tus servicios y consultar tu información.</p>
-    </section>
+{% block dashboard_content %}
 
-    {# El div dashboard-main-grid y sus columnas no van aquí si base_dashboard ya maneja la estructura de columnas #}
-    {# En cambio, dashboard_content es el "contenido principal" de la columna derecha #}
+    <div class="alert alert-primary border-0" role="alert">
+      <h4 class="alert-heading">¡Hola, {{ current_user.username }}! 👋</h4>
+      <p class="mb-0">Bienvenido a tu portal de autogestión. Aquí tienes un resumen de tu cuenta.</p>
+    </div>
 
-    {# Sección de Overview de tarjetas #}
-    <section class="dashboard-overview-section"> {# Le doy un nombre de clase más específico para evitar conflictos #}
-        <h2><i class="bi bi-bar-chart-fill"></i> Resumen Rápido</h2>
-        <div class="dashboard-overview"> {# Este es el grid de overview-cards #}
-            <a href="#" class="overview-card">
-                <i class="bi bi-receipt-cutoff"></i>
-                <div>
-                    <h4>Última Factura</h4>
-                    <p>Monto: $55.000</p>
-                    <p>Vencimiento: 30/06/2025</p>
-                </div>
-            </a>
-            <a href="#" class="overview-card balance">
-                <i class="bi bi-wallet2"></i>
-                <div>
-                    <h4>Saldo Actual</h4>
-                    <p>A favor: $0.00</p>
-                </div>
-            </a>
-            <a href="#" class="overview-card service-status">
-                <i class="bi bi-wifi"></i>
-                <div>
-                    <h4>Estado de tus Servicios</h4>
-                    {# Iterar sobre los servicios contratados del usuario #}
-                    {% if user_services %}
-                        {% for service in user_services %}
-                            <p>{{ service.name }}: Activo</p> {# Asumiendo que siempre están 'Activo' una vez contratados #}
-                        {% endfor %}
-                    {% else %}
-                        <p>No tienes servicios contratados.</p>
-                    {% endif %}
-                </div>
-            </a>
-            <a href="#" class="overview-card notifications">
-                <i class="bi bi-bell"></i>
-                <div>
-                    <h4>Notificaciones</h4>
-                    <p>2 Pendientes</p>
+    <h2 class="section-title mt-5"><i class="bi bi-bar-chart-fill me-2"></i>Resumen Rápido</h2>
+    <div class="row">
+        <div class="col-md-6 col-xl-3 mb-4">
+            <a href="#" class="card dashboard-card card-hover-primary h-100 text-decoration-none text-dark bg-primary-subtle border-0">
+                <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-receipt-cutoff fs-2 text-primary me-3"></i>
+                    <div>
+                        <h6 class="card-subtitle text-muted mb-1">Última Factura</h6>
+                        <p class="h5 fw-bold mb-0">$55.000</p>
+                    </div>
                 </div>
             </a>
         </div>
-    </section>
-
-
-    {# Secciones de Contratar Nuevos Servicios, Operaciones Técnicas, Facturación, etc. #}
-    <section class="contract-service-section">
-        <h2><i class="bi bi-box-seam"></i> ¿Quieres contratar un nuevo servicio?</h2>
-        <div class="grid">
-            <a href="{{ url_for('customer_dashboard.customer_contract_service') }}" class="card action-card">
-                <i class="bi bi-plus-circle card-icon-top-right"></i>
-                <h3><i class="bi bi-cart-plus"></i> Contratar Servicio</h3>
-                <p>Explora y añade nuevos servicios a tu cuenta.</p>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <a href="#" class="card dashboard-card card-hover-success h-100 text-decoration-none text-dark bg-success-subtle border-0">
+                <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-wallet2 fs-2 text-success me-3"></i>
+                    <div>
+                        <h6 class="card-subtitle text-muted mb-1">Saldo Actual</h6>
+                        <p class="h5 fw-bold mb-0">Monto: ${{ "%.2f"|format(total_saldo) }}</p>
+                    </div>
+                </div>
             </a>
         </div>
-    </section>
-
-    <section>
-        <h2><i class="bi bi-gear"></i> Operaciones Técnicas</h2>
-        <div class="grid">
-            <a href="#" class="card">
-                <i class="bi bi-chat-left-dots card-icon-top-right"></i>
-                <h3><i class="bi bi-envelope-plus"></i> Creá tu reclamo</h3>
-                <p>Ingresá tus reclamos y haz seguimiento.</p>
-            </a>
-            <a href="{{ url_for('customer_dashboard.service_management') }}" class="card">
-                <i class="bi bi-activity card-icon-top-right"></i>
-                <h3><i class="bi bi-graph-up"></i> Estado de servicios</h3>
-                <p>Consultá mediciones y el estado actual de tus servicios.</p>
-            </a>
-            <a href="#" class="card">
-                <i class="bi bi-question-circle card-icon-top-right"></i>
-                <h3><i class="bi bi-life-preserver"></i> Otras gestiones</h3>
-                <p>Consultas generales, solicitudes y asistencia.</p>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <a href="{{ url_for('customer_dashboard.service_management') }}" class="card dashboard-card card-hover-warning h-100 text-decoration-none text-dark bg-warning-subtle border-0">
+                <div class="card-body d-flex align-items-center">
+                   <i class="bi bi-wifi fs-2 text-warning me-3"></i>
+                    <div>
+                        <h6 class="card-subtitle text-muted mb-1">Servicios</h6>
+                        <p class="h5 fw-bold mb-0">{{ servicios_activos_count }} Activos</p>
+                    </div>
+                </div>
             </a>
         </div>
-    </section>
-
-    <section>
-        <h2><i class="bi bi-cash-stack"></i> Facturación</h2>
-        <div class="grid">
-            <a href="{{ url_for('customer_dashboard.download_invoice') }}" class="card">
-                <i class="bi bi-file-earmark-text card-icon-top-right"></i>
-                <h3><i class="bi bi-file-earmark-medical"></i> Mi Factura Actual</h3>
-                <p>Descargá tu factura detallada en PDF.</p>
-            </a>
-            <a href="#" class="card">
-                <i class="bi bi-credit-card card-icon-top-right"></i>
-                <h3><i class="bi bi-credit-card-2-front"></i> Medios de pago</h3>
-                <p>Configurá tus formas de pago y realizá pagos en línea.</p>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <a href="#" class="card dashboard-card card-hover-danger h-100 text-decoration-none text-dark bg-danger-subtle border-0">
+                <div class="card-body d-flex align-items-center">
+                   <i class="bi bi-bell-fill fs-2 text-danger me-3"></i>
+                    <div>
+                        <h6 class="card-subtitle text-muted mb-1">Notificaciones</h6>
+                        <p class="h5 fw-bold mb-0">2 Pendientes</p>
+                    </div>
+                </div>
             </a>
         </div>
-    </section>
+        
+    </div>
 
-    <section>
-        <h2><i class="bi bi-graph-up-arrow"></i> Consumo Mensual (Ejemplo)</h2>
-        <div style="background-color: #f0f0f0; padding: 20px; border-radius: 8px; text-align: center; color: #666;">
-            <p>Aquí podría ir un gráfico interactivo de tu consumo de datos o minutos.</p>
-            <p>(Requiere librerías JavaScript de gráficos como Chart.js)</p>
-            <img src="https://via.placeholder.com/600x200?text=Gr%C3%A1fico+de+Consumo" alt="Gráfico de Consumo Ejemplo" style="max-width: 100%; height: auto; margin-top: 15px; border-radius: 5px;">
+
+    <h2 class="section-title mt-4"><i class="bi bi-box-seam me-2"></i>¿Quieres contratar un nuevo servicio?</h2>
+    <div class="card dashboard-card mb-4">
+        <a href="{{ url_for('customer_dashboard.customer_contract_service') }}" class="list-group-item list-group-item-action p-3">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1"><i class="bi bi-cart-plus me-2"></i>Contratar Servicio</h5>
+                <i class="bi bi-plus-circle fs-4 text-primary"></i>
+            </div>
+            <p class="mb-1 text-muted">Explora y añade nuevos servicios a tu cuenta.</p>
+        </a>
+    </div>
+
+    <h2 class="section-title mt-4"><i class="bi bi-gear-fill me-2"></i>Operaciones Técnicas</h2>
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <a href="#" class="card dashboard-card h-100 text-decoration-none text-dark">
+                <i class="bi bi-chat-left-dots card-corner-icon"></i>
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-envelope-plus me-2"></i>Creá tu reclamo</h5>
+                    <p class="card-text text-muted">Ingresá tus reclamos y haz seguimiento.</p>
+                </div>
+            </a>
         </div>
-    </section>
+        <div class="col-lg-4 mb-4">
+            <a href="{{ url_for('customer_dashboard.service_management') }}" class="card dashboard-card h-100 text-decoration-none text-dark">
+                <i class="bi bi-graph-up card-corner-icon"></i>
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-graph-up me-2"></i>Estado de servicios</h5>
+                    <p class="card-text text-muted">Consultá mediciones y el estado actual de tus servicios.</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <a href="#" class="card dashboard-card h-100 text-decoration-none text-dark">
+                <i class="bi bi-question-circle card-corner-icon"></i>
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-life-preserver me-2"></i>Otras gestiones</h5>
+                    <p class="card-text text-muted">Consultas generales, solicitudes y asistencia.</p>
+                </div>
+            </a>
+        </div>
+    </div>
 
-    {# La sección "Información de Interés" (info-extranjeria-section y dashboard-card-info) #}
-    {# es la que estaba en el "dashboard-left-column" en el HTML original. #}
-    {# Para que aparezca a la izquierda y el contenido del dashboard_index a la derecha, #}
-    {# NO DEBES incluir el `dashboard-main-grid` directamente en dashboard_index.html. #}
-    {# La estructura de columnas debe ser manejada por base_dashboard.html. #}
-    {# Entonces, la siguiente sección de "Información Extranjería" DEBE MOVERSE a base_dashboard.html. #}
+    <h2 class="section-title mt-4"><i class="bi bi-cash-stack me-2"></i>Facturación</h2>
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <a href="{{ url_for('customer_dashboard.download_invoice') }}" class="card dashboard-card h-100 text-decoration-none text-dark">
+                <i class="bi bi-file-earmark-text card-corner-icon"></i>
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-file-earmark-text me-2"></i>Mi Factura Actual</h5>
+                    <p class="card-text text-muted">Descargá tu factura detallada en PDF.</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <a href="#" class="card dashboard-card h-100 text-decoration-none text-dark">
+                <i class="bi bi-credit-card card-corner-icon"></i>
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-credit-card-2-front me-2"></i>Medios de pago</h5>
+                    <p class="card-text text-muted">Configurá tus formas de pago y realizá pagos en línea.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <h2 class="section-title mt-4"><i class="bi bi-reception-4 me-2"></i>Estado de Servicios</h2>
+<div class="card dashboard-card">
+    <div class="card-body">
+        <canvas id="servicesBarChart"></canvas>
+    </div>
+</div>
 
-    <script>
-        function toggleInfoExtranjeria(buttonElement) {
-            const card = buttonElement.closest('.info-extranjeria-card');
-            const details = card.querySelector('.info-extranjeria-details');
-            const toggleIcon = card.querySelector('.info-extranjeria-toggle-icon');
+{% block scripts_extra %}
+<script>
+async function createServicesBarChart() {
+    // 1. Pedimos los datos a nuestra nueva API
+    const response = await fetch("{{ url_for('customer_dashboard.service_status_chart_api') }}");
+    const chartData = await response.json();
 
-            if (details.style.display === 'none' || details.style.display === '') {
-                details.style.display = 'block';
-                buttonElement.innerHTML = '<i class="bi bi-arrow-up-circle"></i> Ocultar Información';
-                toggleIcon.classList.remove('bi-chevron-down');
-                toggleIcon.classList.add('bi-chevron-up');
-            } else {
-                details.style.display = 'none';
-                buttonElement.innerHTML = '<i class="bi bi-arrow-down-circle"></i> Mostrar Información';
-                toggleIcon.classList.remove('bi-chevron-up');
-                toggleIcon.classList.add('bi-chevron-down');
+    // 2. Lógica para colorear las barras
+    // Si el servicio está contratado (valor 1), lo pintamos de azul. Si no (valor 0), de gris.
+    const backgroundColors = chartData.is_contracted.map(
+        isContracted => isContracted ? 'rgba(13, 110, 253, 0.8)' : 'rgba(200, 200, 200, 0.5)'
+    );
+    const borderColors = chartData.is_contracted.map(
+        isContracted => isContracted ? 'rgba(13, 110, 253, 1)' : 'rgba(200, 200, 200, 1)'
+    );
+
+    // 3. Preparamos la configuración del gráfico
+    const ctx = document.getElementById('servicesBarChart').getContext('2d');
+    const config = {
+        type: 'bar', // Tipo de gráfico: barras
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Precio del Servicio ($)',
+                data: chartData.prices,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }, // Ocultamos la leyenda, los colores ya son informativos
+                title: { display: true, text: 'Servicios Disponibles vs. Contratados' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return '$' + value.toLocaleString(); // Formato de moneda
+                        }
+                    }
+                }
             }
-        }
-    </script>
+        },
+    };
+
+    // 4. Creamos el gráfico
+    new Chart(ctx, config);
+}
+
+document.addEventListener('DOMContentLoaded', createServicesBarChart);
+</script>
+
+{% endblock %}
+
 {% endblock %}

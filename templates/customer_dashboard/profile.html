@@ -1,65 +1,75 @@
-{% extends "base_dashboard.html" %}
+{% extends "customer_dashboard/base_dashboard.html" %}
 
-{% block title %}Mi Perfil{% endblock %}
+{% block dashboard_title %}Mi Perfil{% endblock %}
 
 {% block dashboard_content %}
-<div class="container mt-4">
-    <h2 class="mb-4">
-        <i class="bi bi-person-circle"></i> Mi Perfil
-    </h2>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-            Información del Usuario
-        </div>
-        <div class="card-body">
-            <p><strong>Nombre de Usuario:</strong> {{ user.username }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            {% if user.registration_date %}
-                <p><strong>Fecha de Registro:</strong> {{ user.registration_date.strftime('%d/%m/%Y %H:%M') }}</p>
-            {% endif %}
-            {% if user.last_login %}
-                <p><strong>Último Acceso:</strong> {{ user.last_login.strftime('%d/%m/%Y %H:%M') }}</p>
-            {% endif %}
-            <p><strong>Estado de la Cuenta:</strong>
-                {% if user.is_active %}
-                    <span class="badge bg-success">Activa</span>
-                {% else %}
-                    <span class="badge bg-danger">Inactiva</span>
-                {% endif %}
-            </p>
-        </div>
-    </div>
+<div class="card dashboard-card page-fade-in">
+    <div class="card-header h5 d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-person-vcard me-2"></i>Información de tu Perfil</span>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-info text-white">
-            Servicios Contratados
-        </div>
-        <div class="card-body">
-            {% if user_services %}
-                <ul class="list-group list-group-flush">
-                    {% for service in user_services %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{{ service.name }}</strong>
-                            <br>
-                            <small class="text-muted">{{ service.description }}</small>
-                        </div>
-                        <span class="badge bg-secondary rounded-pill">${{ "%.2f" | format(service.price) }}</span>
-                    </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-muted">No tienes servicios contratados actualmente.</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="mt-4 text-center">
-        <a href="{{ url_for('customer_dashboard.change_password') }}" class="btn btn-warning">
-            <i class="bi bi-key-fill"></i> Cambiar Contraseña
+    <div>
+        <a href="{{ url_for('customer_dashboard.change_password') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-key-fill me-1"></i> Cambiar Contraseña
         </a>
-    </div>
 
+        {# Este botón solo aparecerá si el usuario logueado es un administrador #}
+        {% if current_user.is_admin %}
+        <a href="#" class="btn btn-outline-primary btn-sm ms-2">
+            <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+        </a>
+        {% endif %}
+    </div>
+</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <p class="text-muted mb-1">Nombre de Usuario</p>
+                <h6 class="fw-bold">{{ user.username }}</h6>
+            </div>
+            <div class="col-md-6 mb-3">
+                <p class="text-muted mb-1">Correo Electrónico</p>
+                <h6 class="fw-bold">{{ user.email }}</h6>
+            </div>
+            {% if user.registration_date %}
+            <div class="col-md-6 mb-3">
+                <p class="text-muted mb-1">Fecha de Registro</p>
+                <h6 class="fw-bold">{{ user.registration_date.strftime('%d/%m/%Y') }}</h6>
+            </div>
+            {% endif %}
+            <div class="col-md-6 mb-3">
+                <p class="text-muted mb-1">Estado de la Cuenta</p>
+                <h6>
+                    {% if user.is_active %}
+                        <span class="badge bg-success">Activa</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactiva</span>
+                    {% endif %}
+                </h6>
+            </div>
+        </div>
+        
+        <hr class="my-4">
+
+        <h5 class="mb-3">Servicios Contratados</h5>
+        {% if user_services %}
+            <ul class="list-group list-group-flush">
+                {% for service in user_services %}
+                <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
+                    <div>
+                        <strong>{{ service.name }}</strong>
+                        <br>
+                        <small class="text-muted">{{ service.description }}</small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">${{ "%.2f" | format(service.price) }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-light border-0" role="alert">
+              No tienes servicios contratados actualmente.
+            </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
