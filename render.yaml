@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: tu-app-flask # El nombre de tu servicio en Render
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    preDeployCommand: flask db upgrade && flask seed-data
+    # ... otras configuraciones como secretos, bases de datos, etc.
