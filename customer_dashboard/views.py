@@ -244,6 +244,7 @@ def view_profile():
 def change_password():
     form = ChangePasswordForm()
     if form.validate_on_submit():
+        bcrypt_for_password_change = current_app.extensions['flask-bcrypt'][0]
         if not current_user.check_password(form.old_password.data):
             flash('La contraseña actual es incorrecta.', 'danger')
         else:

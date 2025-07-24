@@ -19,7 +19,9 @@ from sqlalchemy import func
 from models import db, User, Service, Complaint, user_services_association 
 
 print("=== DEBUG: app.py ha sido recargado y ejecutado ===") # Este print se ejecuta cuando el módulo es cargado
-
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 # Definición de la función create_app
 def create_app():
     # === INSTANCIA DE LA APP Y CONFIGURACIÓN ===
@@ -38,11 +40,9 @@ def create_app():
     
     # Bcrypt inicializado aquí, dentro de create_app
     # Para acceder a él fuera de create_app, usaremos current_app.extensions['flask-bcrypt']
-    bcrypt_instance = Bcrypt(app) 
+    Bcrypt(app)
 
-    login_manager = LoginManager()
-    login_manager.login_view = 'login'
-    login_manager.login_message_category = 'info'
+ 
     login_manager.init_app(app)
     
     migrate = Migrate(app, db)
@@ -111,8 +111,9 @@ def create_app():
         if form.validate_on_submit():
             user = User.query.filter_by(username=form.username.data).first()
             if user:
+                bcrypt_from_context = current_app.extensions['flask-bcrypt'][0]
                 # Usa la instancia de bcrypt que se inicializó dentro de create_app
-                if bcrypt_instance.check_password_hash(user.password, form.password.data):
+                if bcrypt_from_context.check_password_hash(user.password, form.password.data):
                     if user.is_active:
                         login_user(user, remember=form.remember_me.data)
                         flash('Inicio de sesión exitoso!', 'success')
@@ -146,7 +147,8 @@ def create_app():
                 return render_template('auth.html', title='Registrarse', form=LoginForm(), form_register=form_register)
 
             # Usa la instancia de bcrypt de create_app
-            hashed_password = bcrypt_instance.generate_password_hash(form_register.password.data).decode('utf-8')
+            bcrypt_from_context = current_app.extensions['flask-bcrypt'][0]
+            hashed_password = bcrypt_from_context.generate_password_hash(form_register.password.data).decode('utf-8')
             user = User(username=form_register.username.data, email=form_register.email.data, password=hashed_password, is_active=True)
             db.session.add(user)
             db.session.commit()
